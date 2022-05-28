@@ -22,9 +22,10 @@ fn add_server(name: &str, url: &str) -> &'static str {
 #[delete("/remove_server/<name>")]
 fn remove_server(name: &str) -> &'static str {
 
+    let name_txt = String::from_utf8(base64::decode_config(name, base64::URL_SAFE).unwrap()).unwrap();
     let server_text = std::fs::read_to_string("./servers.json").unwrap();
     let mut server_data = serde_json::from_str::<HashMap<String, String>>(&server_text).unwrap();
-    server_data.remove(name).unwrap();
+    server_data.remove(&name_txt).unwrap();
     std::fs::write(
         "./servers.json",
         serde_json::to_string_pretty(&server_data).unwrap()
